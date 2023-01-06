@@ -1,0 +1,8 @@
+data/
+eigen-3.4.0/
+__pycache__/
+archive/
+eigen-3.4.0.zip
+*.npy
+filter.py
+*.cpp
