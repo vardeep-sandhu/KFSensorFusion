@@ -82,7 +82,7 @@ def main():
         from kalman_filter import KalmanFilter
 
     kf = KalmanFilter()
-    kf.setMetrices(x_0, P , A, Q, R, H)
+    kf.setMetrices(x_0, P, A, Q, R, H)
 
     for i in range(1, len(measurements)):
         kf.predict()

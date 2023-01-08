@@ -26,14 +26,14 @@ class KalmanFilter{
 
   public:
     KalmanFilter(){};
-    void setMetrices(const int noise_ax, const int noise_ay, const VectorXd& x_0, const MatrixXd& P, const MatrixXd& A, const MatrixXd& Q, const MatrixXd& R, const MatrixXd& H);
+    void setMetrices(const VectorXd& x_0, const MatrixXd& P, const MatrixXd& A, const MatrixXd& Q, const MatrixXd& R, const MatrixXd& H);
     VectorXd getX() const;
     void predict();
     void update(const VectorXd& z);
 };
 
 void KalmanFilter::setMetrices(
-  const int noise_ax, const int noise_ay, const VectorXd& x_0, const MatrixXd& P, const MatrixXd& A, const MatrixXd& Q, const MatrixXd& R, const MatrixXd& H){
+  const VectorXd& x_0, const MatrixXd& P, const MatrixXd& A, const MatrixXd& Q, const MatrixXd& R, const MatrixXd& H){
 
   this->noise_ax = noise_ax;
   this->noise_ay = noise_ay;
