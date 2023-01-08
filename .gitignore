@@ -5,3 +5,4 @@ archive/
 eigen-3.4.0.zip
 *.npy
 filter.py
+build/

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 project(kalmanfilter)
 set(CMAKE_CXX_STANDARD 20)
-set(PYBIND11_PYTHON_VERSION 3.6)
+set(PYBIND11_PYTHON_VERSION 3.8)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -fPIC")
 
 find_package(pybind11 REQUIRED)

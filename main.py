@@ -10,7 +10,7 @@ import argparse
 
 def parse_commandline():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--backend','-b', type=str, choices=['cpp', 'python'])
+    parser.add_argument('--backend','-b', type=str, required= True, choices=['cpp', 'python'])
     args = parser.parse_args()
     return args
 
