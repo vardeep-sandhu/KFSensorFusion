@@ -2,7 +2,7 @@
 
 ## About The Project
 
-The given repository contains solution for the **LiDAR - RADAR Fusion** problem. [Late-fusion-challenge.pdf](Late-fusion-challenge.pdf) contains further information of the task and the data used. 
+The given repository contains solution for the **LiDAR - RADAR Fusion** problem. [Late-fusion-challenge.pdf](Late-fusion-challenge.pdf) contains further information of the task and the data used. The report containing the mathematical reasoning is given [here](report.pdf)
 
 ## Built With
 This project was built with:
@@ -63,7 +63,7 @@ After this everything is set and we are ready to run the actual program. Here si
 
 
 ```
-python main.py -b [python, cpp]
+python3 main.py -b [python, cpp]
 ```
 Here `-b` flag signifies the backend that can be choosen for the task. There are two options `python` which invokes the kalmanfilter.py script or `cpp` which invokes the library in the `build/` directory. Thus, the results are generated and the output trajectory is saved in the local directory. Here is the sample of the generated trajectory.
 
