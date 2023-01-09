@@ -29,7 +29,7 @@ def main():
     radar_file = open(radar_path, "rb")
     radar_states = pickle.load(radar_file)
     
-    gt_path = os.path.join(basedir, "radar.bin")
+    gt_path = os.path.join(basedir, "ground_truth.bin")
     assert os.path.isfile(gt_path), "GT path is incorrect"
     
     ground_truth_file = open(gt_path, "rb")
@@ -45,10 +45,10 @@ def main():
     predictions = [x_0]
 
     P = np.array([
-                [0.25, 0, 0, 0],
-                [0, 0.25, 0, 0],               # State Cov mat
-                [0, 0, 0.01, 0],
-                [0, 0, 0, 0.01]
+                [0.025, 0, 0, 0],
+                [0, 0.025, 0, 0],               # State Cov mat
+                [0, 0, 5, 0],
+                [0, 0, 0, 5]
                 ])
     A = np.array([
             [1.0, 0, 1.0, 0],               # Kinematic Equation 
@@ -61,8 +61,8 @@ def main():
             [0, 1.0, 0, 0]
             ])
     R = np.array([
-            [5, 0],                        # Measurement Cov mat
-            [0, 5]
+            [10, 0],                        # Measurement Cov mat
+            [0, 10]
             ])
     noise_ax = 10
     noise_ay = 10
@@ -92,15 +92,11 @@ def main():
 
         prediction = kf.getX()
         predictions.append(prediction)
-        print('iteration', i, 'x: ', predictions[i])
     
     predictions = np.concatenate(predictions).reshape(-1, 4)
-
-    plt.plot(predictions[:,0], predictions[:,1], label = 'Kalman Filter Prediction')
-    plt.legend()
-    plt.show()
+    ADE = utils.ade_calculate(predictions, ground_states)
+    print("The Average Displacement Error (ADE) is: ", ADE)
+    utils.save_plot(predictions, ground_states)
 
 if __name__ == "__main__":
     main()
-
-    

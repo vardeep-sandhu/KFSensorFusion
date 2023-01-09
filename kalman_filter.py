@@ -31,33 +31,3 @@ class KalmanFilter(object):
         
     def getX(self):
         return self.x
-
-if __name__ == "__main__":
-    measurements = np.load("radar.npy")
-    observations = np.load("lidar.npy")
-    predictions = [measurements[0]]
-
-    gt = np.load("ground.npy")
-
-    x_0 = measurements[0]
-    measurements = measurements[1: , :]
-
-    ground_truth = gt[0]
-
-    kf = KalmanFilter(x_0 = x_0)
-
-    for i in range (len(measurements)):
-        kf.predict()
-        predictions.append(kf.update(observations[i+1]))
-        print('iteration', i, 'x: ', predictions[i])
-        
-    predictions = np.concatenate(predictions).reshape(-1, 4)
-
-    plt.plot(measurements[:,0], measurements[:,1], label = 'radar')
-    plt.plot(observations[:,0], observations[:,1], label = 'lidar')
-
-    plt.plot(predictions[:,0], predictions[:,1], label = 'Kalman Filter Prediction')
-    plt.plot(gt[:,0], gt[:,1], label = 'GT')
-
-    plt.legend()
-    plt.show()

@@ -69,8 +69,8 @@ if __name__ == "__main__":
         ground_np[k,2] = vel_x 
         ground_np[k,3] = vel_y 
         
-    # np.save("radar.npy", radar_np)
-    # np.save("lidar.npy", lidar_np)
-    # np.save("ground.npy", ground_np)
+    np.save("radar.npy", radar_np)
+    np.save("lidar.npy", lidar_np)
+    np.save("ground.npy", ground_np)
 
-    # print(radar_np[:10])
+    print(radar_np[:10])
