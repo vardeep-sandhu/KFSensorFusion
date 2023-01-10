@@ -44,31 +44,37 @@ def main():
     x_0 = utils.radar_obj_to_arry(measurements[0])
     predictions = [x_0]
 
+    # State covariance matrix
     P = np.array([
                 [0.025, 0, 0, 0],
-                [0, 0.025, 0, 0],               # State Cov mat
+                [0, 0.025, 0, 0],
                 [0, 0, 5, 0],
                 [0, 0, 0, 5]
                 ])
+    # Transition matrix
     A = np.array([
-            [1.0, 0, 1.0, 0],               # Kinematic Equation 
+            [1.0, 0, 1.0, 0],               
             [0, 1.0, 0, 1.0],
             [0, 0, 1.0, 0],
             [0, 0, 0, 1.0]
             ])
+            
+    # Measurement matrix
     H = np.array([ 
-            [1.0, 0, 0, 0],					#Mapping of state to measurement 
+            [1.0, 0, 0, 0],					
             [0, 1.0, 0, 0]
             ])
+
+    # Measurement noise covariance matrix
     R = np.array([
-            [10, 0],                        # Measurement Cov mat
+            [10, 0],                     
             [0, 10]
             ])
     noise_ax = 10
     noise_ay = 10
-
+    # Process noise covariance matrix
     Q = np.array([
-            [0.25 * noise_ax, 0, 0.5 * noise_ax, 0],               # Kinematic Equation 
+            [0.25 * noise_ax, 0, 0.5 * noise_ax, 0],                
             [0, 0.25 * noise_ay, 0, 0.5 * noise_ax],
             [0.5 * noise_ax, 0, noise_ax, 0],
             [0, 0.5 * noise_ay, 0, noise_ay]

@@ -33,6 +33,7 @@ class KalmanFilter{
 };
 
 void KalmanFilter::setMetrices(
+  // Setting Matricies
   const VectorXd& x_0, const MatrixXd& P, const MatrixXd& A, const MatrixXd& Q, const MatrixXd& R, const MatrixXd& H){
 
   this->noise_ax = noise_ax;
@@ -49,25 +50,25 @@ void KalmanFilter::setMetrices(
 }
 
 VectorXd KalmanFilter::getX() const{
-  return this->x;
+  return x;
 }
 
 // Prediction Step 
 void KalmanFilter::predict(){
-  this->x = this->A * this->x;
-  this->P = this->A * this->P * this->A.transpose() + this->Q;
+  x = A * x;
+  P = A * P * A.transpose() + Q;
 }
 
 // Measurement and Update Step
 void KalmanFilter::update(const VectorXd& z){
 
-  VectorXd Y = z - this->H * this->x;
+  VectorXd Y = z - H * x;
 
-  const MatrixXd S = this->R + (this->H * this->P * this->H.transpose());
+  MatrixXd S = R + (H * P * H.transpose());
   
-  const MatrixXd K = this->P * this->H.transpose() * S.inverse();
+  MatrixXd K = P * H.transpose() * S.inverse();
   
-  this->x = this->x + (K * Y);
+  x = x + (K * Y);
   
-  this->P = (this->I - K * this->H) * this->P;
+  P = (I - K * H) * P;
   }
