@@ -20,12 +20,13 @@ cd TechnicalChallangemotorAI/
 ```
 ## Prerequisites
 
-Since we are using external library Eigen for our C++ implementation, so for smooth running at different machines we will build a docker container. You can install docker on your local machine using this [link](https://docs.docker.com/engine/install/ubuntu/) and make sure you follow these [steps](https://docs.docker.com/engine/install/linux-postinstall/) to run Docker with root privilidges.
+Since we are using external library Eigen for our C++ implementation, so for smooth running at different machines we will build a docker container. You can install docker and docker-compose on your local machine using the [link](https://docs.docker.com/engine/install/ubuntu/) and [link](https://docker-docs.netlify.app/compose/install/#install-compose) respectively and make sure you follow these [steps](https://docs.docker.com/engine/install/linux-postinstall/) to run Docker with root privilidges. 
+
 
 Additionally, you need to set $DATA variable in your bashrc to where the data is placed in your local machine. This can be done by:
 
 ```shell
-export $DATA=/path/to/dataset
+export DATA=/path/to/dataset
 ```
 
 
@@ -35,7 +36,7 @@ That's all you need!
 
 To build the docker container run:
 
-```
+```shell
 make start
 ```
 
@@ -43,7 +44,7 @@ This command will build the docker container.
 
 You can test if all the appropriate packages of C++ and Python are installed by running:
 
-```
+```shell
 make test
 ```
 

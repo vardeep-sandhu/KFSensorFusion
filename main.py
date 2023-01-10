@@ -17,6 +17,7 @@ def parse_commandline():
 def main():
     args = parse_commandline()
     basedir = "data"
+    print("Loading RADAR, LiDAR and GT")
     lidar_path = os.path.join(basedir, "lidar.bin")
     assert os.path.isfile(lidar_path), "LiDAR path is incorrect"
     
@@ -37,6 +38,8 @@ def main():
 
     # sanity check 
     assert len(lidar_states) == len(radar_states) == len(ground_states), "Error in the dataset"
+    print("*" * 80)
+    print("LiDAR and RADAR observation have length:", len(lidar_states))
 
     measurements = radar_states
     observations = lidar_states
@@ -81,16 +84,20 @@ def main():
             ])
 
     if args.backend == "cpp":
-        # change name for cpp lib 
+        print("*" * 80)
+        print("Loading CPP implementation of Kalman Filter")
         sys.path.append("build/")
         from kalmanfilter import KalmanFilter
     elif args.backend == "python":
+        print("*" * 80)
+        print("Loading Python implementation of Kalman Filter")
         from kalman_filter import KalmanFilter
 
     kf = KalmanFilter()
     kf.setMetrices(x_0, P, A, Q, R, H)
 
     for i in range(1, len(measurements)):
+
         kf.predict()
         
         observation = utils.lidar_obj_to_arry(observations[i])
@@ -101,7 +108,13 @@ def main():
     
     predictions = np.concatenate(predictions).reshape(-1, 4)
     ADE = utils.ade_calculate(predictions, ground_states)
+    
+    print("*" * 80)
     print("The Average Displacement Error (ADE) is: ", ADE)
+    print("*" * 80)
+    print("The plot is saved in the current working dir.")
+    print("*" * 80)
+
     utils.save_plot(predictions, ground_states)
 
 if __name__ == "__main__":
