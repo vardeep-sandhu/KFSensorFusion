@@ -102,16 +102,16 @@ def main():
         # Prediction step
         kf.predict()
         # Alternate radar and lidar measurement step
+        print("*" * 50)
+        print("Time stamp of measurement ", i)
         if i%2 == 1:
             measurement = utils.radar_obj_to_arry(radar_states[i])
             print("Making update using RADAR measurement: ", measurement)
             kf.update(measurement, lidar=False)
-            print(i)
         elif i%2 == 0:
             measurement = utils.lidar_obj_to_arry(lidar_states[i])
             print("Making update using LiDAR measurement: ", measurement)
             kf.update(measurement, lidar=True)
-            print(i)
         else:
             print("not used")
         prediction = kf.getX()
