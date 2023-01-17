@@ -41,18 +41,18 @@ def main():
     print("*" * 80)
     print("LiDAR and RADAR observation have length:", len(lidar_states))
 
-    measurements = radar_states
-    observations = lidar_states
+    # measurements = radar_states
+    # observations = lidar_states
     
-    x_0 = utils.radar_obj_to_arry(measurements[0])
+    x_0 = utils.radar_obj_to_arry(radar_states[0])
     predictions = [x_0]
 
     # State covariance matrix
     P = np.array([
                 [0.025, 0, 0, 0],
                 [0, 0.025, 0, 0],
-                [0, 0, 5, 0],
-                [0, 0, 0, 5]
+                [0, 0, 1, 0],
+                [0, 0, 0, 1]
                 ])
     # Transition matrix
     A = np.array([
@@ -62,17 +62,19 @@ def main():
             [0, 0, 0, 1.0]
             ])
             
-    # Measurement matrix
-    H = np.array([ 
+    # Measurement matrix (LiDAR)
+    H_lidar = np.array([ 
             [1.0, 0, 0, 0],					
             [0, 1.0, 0, 0]
             ])
 
-    # Measurement noise covariance matrix
-    R = np.array([
-            [10, 0],                     
-            [0, 10]
+    H_radar = np.identity(4)
+    # Measurement noise covariance matrix (LiDAR)
+    R_lidar = np.array([
+            [1, 0],                     
+            [0, 1]
             ])
+    R_radar = np.identity(4)
     noise_ax = 10
     noise_ay = 10
     # Process noise covariance matrix
@@ -94,16 +96,26 @@ def main():
         from kalman_filter import KalmanFilter
 
     kf = KalmanFilter()
-    kf.setMetrices(x_0, P, A, Q, R, H)
+    kf.setMetrices(x_0, P, A, Q, H_lidar, H_radar, R_radar, R_lidar)
 
-    for i in range(1, len(measurements)):
-
+    for i in range(1, len(radar_states)):
+        # Prediction step
         kf.predict()
-        
-        observation = utils.lidar_obj_to_arry(observations[i])
-        kf.update(observation)
-
+        # Alternate radar and lidar measurement step
+        if i%2 == 1:
+            measurement = utils.radar_obj_to_arry(radar_states[i])
+            print("Making update using RADAR measurement: ", measurement)
+            kf.update(measurement, lidar=False)
+            print(i)
+        elif i%2 == 0:
+            measurement = utils.lidar_obj_to_arry(lidar_states[i])
+            print("Making update using LiDAR measurement: ", measurement)
+            kf.update(measurement, lidar=True)
+            print(i)
+        else:
+            print("not used")
         prediction = kf.getX()
+        print("Prediction is: ", prediction)
         predictions.append(prediction)
     
     predictions = np.concatenate(predictions).reshape(-1, 4)
