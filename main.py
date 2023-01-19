@@ -14,77 +14,35 @@ def parse_commandline():
     args = parser.parse_args()
     return args
 
+def load_data(path: str):
+    assert os.path.isfile(path), "Path is incorrect"
+    file = open(path, "rb")
+    data = pickle.load(file)
+    return data
+
 def main():
     args = parse_commandline()
     basedir = "data"
     print("Loading RADAR, LiDAR and GT")
+
     lidar_path = os.path.join(basedir, "lidar.bin")
-    assert os.path.isfile(lidar_path), "LiDAR path is incorrect"
-    
-    lidar_file = open(lidar_path, "rb")
-    lidar_states = pickle.load(lidar_file)
-    
     radar_path = os.path.join(basedir, "radar.bin")
-    assert os.path.isfile(radar_path), "RADAR path is incorrect"
-
-    radar_file = open(radar_path, "rb")
-    radar_states = pickle.load(radar_file)
-    
     gt_path = os.path.join(basedir, "ground_truth.bin")
-    assert os.path.isfile(gt_path), "GT path is incorrect"
     
-    ground_truth_file = open(gt_path, "rb")
-    ground_states = pickle.load(ground_truth_file)
-
+    lidar_states = load_data(lidar_path)
+    radar_states = load_data(radar_path)
+    gt_states = load_data(gt_path)
+    
     # sanity check 
-    assert len(lidar_states) == len(radar_states) == len(ground_states), "Error in the dataset"
+    assert len(lidar_states) == len(radar_states) == len(gt_states), "Error in the dataset"
     print("*" * 80)
     print("LiDAR and RADAR observation have length:", len(lidar_states))
 
-    # measurements = radar_states
-    # observations = lidar_states
-    
-    x_0 = utils.radar_obj_to_arry(radar_states[0])
+    prev_time, x_0 = utils.radar_obj_to_arry(radar_states[0])
     predictions = [x_0]
 
     # State covariance matrix
-    P = np.array([
-                [0.025, 0, 0, 0],
-                [0, 0.025, 0, 0],
-                [0, 0, 1, 0],
-                [0, 0, 0, 1]
-                ])
-    # Transition matrix
-    A = np.array([
-            [1.0, 0, 1.0, 0],               
-            [0, 1.0, 0, 1.0],
-            [0, 0, 1.0, 0],
-            [0, 0, 0, 1.0]
-            ])
-            
-    # Measurement matrix (LiDAR)
-    H_lidar = np.array([ 
-            [1.0, 0, 0, 0],					
-            [0, 1.0, 0, 0]
-            ])
-
-    H_radar = np.identity(4)
-    # Measurement noise covariance matrix (LiDAR)
-    R_lidar = np.array([
-            [1, 0],                     
-            [0, 1]
-            ])
-    R_radar = np.identity(4)
-    noise_ax = 10
-    noise_ay = 10
-    # Process noise covariance matrix
-    Q = np.array([
-            [0.25 * noise_ax, 0, 0.5 * noise_ax, 0],                
-            [0, 0.25 * noise_ay, 0, 0.5 * noise_ax],
-            [0.5 * noise_ax, 0, noise_ax, 0],
-            [0, 0.5 * noise_ay, 0, noise_ay]
-            ])
-
+    
     if args.backend == "cpp":
         print("*" * 80)
         print("Loading CPP implementation of Kalman Filter")
@@ -96,22 +54,33 @@ def main():
         from kalman_filter import KalmanFilter
 
     kf = KalmanFilter()
-    kf.setMetrices(x_0, P, A, Q, H_lidar, H_radar, R_radar, R_lidar)
+    kf.setMetrices(x_0)
 
     for i in range(1, len(radar_states)):
-        # Prediction step
-        kf.predict()
         # Alternate radar and lidar measurement step
         print("*" * 50)
         print("Time stamp of measurement ", i)
         if i%2 == 1:
-            measurement = utils.radar_obj_to_arry(radar_states[i])
+            curr_time, measurement = utils.radar_obj_to_arry(radar_states[i])
+            dt = curr_time - prev_time
+            
+            kf.update_metrices(dt)
+            kf.predict()
+
             print("Making update using RADAR measurement: ", measurement)
+            print(dt)
             kf.update(measurement, lidar=False)
+            prev_time = curr_time
+        
         elif i%2 == 0:
-            measurement = utils.lidar_obj_to_arry(lidar_states[i])
+            curr_time, measurement = utils.lidar_obj_to_arry(lidar_states[i])
+            dt = curr_time - prev_time
+            kf.update_metrices(dt)
+            kf.predict()
+            
             print("Making update using LiDAR measurement: ", measurement)
             kf.update(measurement, lidar=True)
+            prev_time = curr_time
         else:
             print("not used")
         prediction = kf.getX()
@@ -119,15 +88,19 @@ def main():
         predictions.append(prediction)
     
     predictions = np.concatenate(predictions).reshape(-1, 4)
-    ADE = utils.ade_calculate(predictions, ground_states)
+    ADE = utils.ade_calculate(predictions, gt_states)
+    rmse_vel = utils.CalculateRMSE(predictions, gt_states)
     
     print("*" * 80)
     print("The Average Displacement Error (ADE) is: ", ADE)
     print("*" * 80)
+    print("The RMSE for velocity component is: ")
+    print(rmse_vel)
+    print("*" * 80)
     print("The plot is saved in the current working dir.")
     print("*" * 80)
 
-    utils.save_plot(predictions, ground_states)
+    utils.save_plot(predictions, gt_states)
 
 if __name__ == "__main__":
     main()
