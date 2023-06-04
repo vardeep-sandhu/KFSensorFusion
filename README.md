@@ -2,7 +2,7 @@
 
 ## About The Project
 
-The given repository contains solution for the **LiDAR - RADAR Fusion** problem. [Late-fusion-challenge.pdf](Late-fusion-challenge.pdf) contains further information of the task and the data used. The report containing the mathematical reasoning is given [here](report.pdf)
+The given repository contains solution for the **LiDAR - RADAR Fusion** problem. Where we are provided with lidar and radar measurements of a detected vehcile and the task is to get a fused trajectory with minimum RMS error. 
 
 ## Built With
 This project was built with:
@@ -18,6 +18,14 @@ Clone the repository into a local machine and enter the KFSensorFusion directory
 git clone https://github.com/vardeep-sandhu/KFSensorFusion.git
 cd KFSensorFusion/
 ```
+Get data by running the following commands:
+
+```shell
+wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=1M3VRzUxoraUBWCoXprKKfcJAzp8awlh_' -O data.zip
+unzip data.zip
+rm data.zip
+```
+
 ## Prerequisites
 
 Since we are using external library Eigen for our C++ implementation, so for smooth running at different machines we will build a docker container. You can install docker and docker-compose on your local machine using the [link](https://docs.docker.com/engine/install/ubuntu/) and [link](https://docker-docs.netlify.app/compose/install/#install-compose) respectively and make sure you follow these [steps](https://docs.docker.com/engine/install/linux-postinstall/) to run Docker with root privilidges. 
@@ -28,7 +36,6 @@ Additionally, you need to set $DATA variable in your bashrc to where the data is
 ```shell
 export DATA=/path/to/dataset
 ```
-
 
 That's all you need!
 
