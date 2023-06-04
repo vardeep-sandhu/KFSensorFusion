@@ -1,4 +1,4 @@
-# TechnicalChallangemotorAI
+# KFSensorFusion
 
 ## About The Project
 
@@ -12,11 +12,11 @@ This project was built with:
 
 ## Getting Started
 
-Clone the repository into a local machine and enter the TechnicalChallange-motorAI directory using:
+Clone the repository into a local machine and enter the KFSensorFusion directory using:
 
 ```shell
-git clone https://github.com/vardeep-sandhu/TechnicalChallangemotorAI.git
-cd TechnicalChallangemotorAI/
+git clone https://github.com/vardeep-sandhu/KFSensorFusion.git
+cd KFSensorFusion/
 ```
 ## Prerequisites
 
